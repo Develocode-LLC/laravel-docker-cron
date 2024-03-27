@@ -2,20 +2,19 @@ FROM ubuntu:22.04
 
 # Install necessary packages for Laravel, including cron and unzip
 RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install -y cron curl unzip libpq-dev \
+    && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install -y cron curl unzip libpq-dev php \
     # Remove package lists for smaller image sizes
     && rm -rf /var/lib/apt/lists/* \
     && docker-php-ext-install pdo pdo_mysql \
-    # Install Composer
-    && curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Set the working directory for the Laravel app
 WORKDIR /workspace
 
 # Copy the Laravel app into the container
 COPY . /workspace
-
-WORKDIR /workspace/live-n-learn-app
 
 # Install the Laravel app dependencies
 # RUN composer install
