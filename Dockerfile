@@ -19,7 +19,7 @@ COPY . /workspace
 WORKDIR /workspace/live-n-learn-app
 
 # Install the Laravel app dependencies
-RUN composer install
+# RUN composer install
 
 # Set proper permissions for the storage and bootstrap/cache directories
 RUN chown -R www-data:www-data /workspace/live-n-learn-app/storage /workspace/live-n-learn-app/bootstrap/cache \
