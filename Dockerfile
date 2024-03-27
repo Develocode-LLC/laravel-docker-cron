@@ -16,9 +16,12 @@ WORKDIR /workspace
 # Copy the Laravel app into the container
 COPY . /workspace
 
+# Install the Laravel app dependencies
+RUN composer install
+
 # Set proper permissions for the storage and bootstrap/cache directories
-# RUN chown -R www-data:www-data /workspace/live-n-learn-app/storage /workspace/live-n-learn-app/bootstrap/cache \
-#     && chmod -R 755 /workspace/live-n-learn-app/storage /workspace/live-n-learn-app/bootstrap/cache
+RUN chown -R www-data:www-data /workspace/live-n-learn-app/storage /workspace/live-n-learn-app/bootstrap/cache \
+    && chmod -R 755 /workspace/live-n-learn-app/storage /workspace/live-n-learn-app/bootstrap/cache
 
 # Copy the crontab file and entrypoint script into the container
 COPY crontab /hello-cron
