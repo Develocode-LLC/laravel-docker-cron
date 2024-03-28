@@ -28,7 +28,7 @@ WORKDIR /workspace
 # Copy the Laravel app into the container
 COPY . /workspace
 
-WORKDIR /workspace/live-n-learn
+WORKDIR /workspace/live-n-learn-app
 
 # Install the Laravel app dependencies
 RUN composer install
