@@ -315,8 +315,8 @@
                       >
                         <thead class="thead-light">
                           <tr>
-                            <th>Fname</th>
-                            <th>Lname</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
                             <th></th>
                             <th></th>
                           </tr>
@@ -692,36 +692,44 @@
                               </p> -->
                         </div>
                         <div class="card-body p-3">
-                          <div class="row"></div>
-                          <div
-                            v-for="itineraryInfo in itineraryList"
-                            class="timeline timeline-one-side"
-                          >
-                            <div class="timeline-block mb-3">
-                              <span class="timeline-step">
-                                <i class="text-dark text-gradient">
-                                  {{ itineraryInfo.itinerary_index }}</i
-                                >
-                              </span>
-                              <div class="timeline-content">
-                                <h6
-                                  class="text-dark text-sm font-weight-bold mb-0"
-                                >
-                                  Day {{ itineraryInfo.itinerary_index }} -
-                                  Activity
-                                </h6>
-                                <p
-                                  class="text-secondary font-weight-bold text-xs mt-1 mb-0"
-                                >
-                                  {{ itineraryInfo.title }}
-                                </p>
-                                <p>
-                                  <small>{{ itineraryInfo.content }}</small>
-                                </p>
+                            <div class="row"></div>
+                            <div
+
+
+                              v-for="(item, index) in itineraryList"
+                              class="timeline timeline-one-side"
+                            >
+                              <div class="timeline-block mb-3">
+                                <span class="timeline-step">
+                                  <i class="text-dark text-gradient">
+                                    {{ index + 1 }}</i
+                                  >
+                                </span>
+                                <div class="timeline-content">
+                                  <h6
+                                    class="text-dark text-sm font-weight-bold mb-0"
+                                  >
+                                    Day {{ index + 1 }} -
+                                    Activity
+                                  </h6>
+                                  <div class="row">
+                                    <img v-if="item.media_file != null"
+                        :src="item.media_file.uri"
+                        class="img-fluid img-thumbnail" style="margin:3px;"
+                      />
+                                  </div>
+                                  <p
+                                    class="text-secondary font-weight-bold text-xs mt-1 mb-0"
+                                  >
+                                    {{ item.title }}
+                                  </p>
+                                  <p>
+                                    <small>{{ item.content }}</small>
+                                  </p>
+                                </div>
                               </div>
                             </div>
                           </div>
-                        </div>
                       </div>
                     </div>
                   </div>

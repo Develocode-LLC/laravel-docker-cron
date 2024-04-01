@@ -1,30 +1,30 @@
 <template>
-  <form class="shadow-md rounded m-4 p-4 mx-auto" @submit.prevent="submit">
+  <form class="container-fluid" @submit.prevent="submit">
     <div v-if="this.showError" class="row">
       <div class="col-md-4">
-        <p>{{ error.message }}</p>
+        <p class="text-danger">{{ error.message }}</p>
       </div>
     </div>
 
     <div class="row">
       <div class="col-md-10 card mx-auto">
-        <h6 class="text-center fs-2">Traveler Information</h6>
+        <h6 class="text-center fs-2">Traveler Contact Information</h6>
         <div class="row">
-          <h6>Traveler's Personal Info</h6>
+          <h6>Traveler Personal Information</h6>
           <div class="col-md-4">
             <div class="form-group">
               <label for="first_name">
                 First Name
-                <i class="text-danger p-1 info-sm">*</i>
+                <i class="text-danger text-sm">*</i>
               </label>
-              <input type="text" class="form-control" id="first_name" placeholder="Traveler's First Name"
+              <input type="text" class="form-control" id="first_name" placeholder="Traveler First Name"
                 v-model="formData.first_name" required />
             </div>
           </div>
           <div class="col-md-4">
             <div class="form-group">
               <label for="middle_name"> Middle Name</label>
-              <input type="text" class="form-control" id="middle_name" placeholder="Traveler's Middle Name"
+              <input type="text" class="form-control" id="middle_name" placeholder="Traveler Middle Name"
                 v-model="formData.middle_name" />
             </div>
           </div>
@@ -32,7 +32,7 @@
             <div class="form-group">
               <label for="last_name">
                 Last Name<i class="text-danger p-1 info-sm">*</i></label>
-              <input type="text" class="form-control" id="last_name" placeholder="Traveler's Last Name"
+              <input type="text" class="form-control" id="last_name" placeholder="Traveler Last Name"
                 v-model="formData.last_name" required />
             </div>
           </div>
@@ -53,6 +53,17 @@
           </div>
           <div class="col-md-4">
             <div class="form-group">
+              <label for="date_of_birth">Date of Birth<i class="text-danger p-1 info-sm">*</i></label>
+
+              <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
+                v-model="formData.date_of_birth" min="1930-01-01" max="2099-12-31" />
+            </div>
+          </div>
+
+        </div>
+        <div class="row">
+          <div class="col-md-4">
+            <div class="form-group">
               <label for="gender_identity">Gender Identity<i class="text-danger p-1 info-sm">*</i></label>
 
               <select class="form-control" id="gender_identity" v-model="formData.gender_identity" required>
@@ -66,16 +77,6 @@
           </div>
           <div class="col-md-4">
             <div class="form-group">
-              <label for="traveler_gender_id">Gender Identity Other<i class="text-danger p-1">*</i></label>
-              <input type="text" id="traveler_gender_id_other" v-model="formData.gender_identity_other"
-                class="form-control" :disabled="formData.gender_identity !== 'other'" />
-            </div>
-          </div>
-        </div>
-
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group">
               <label for="preferred_pronouns">Preferred Pronouns</label>
               <select id="preferred_pronouns" class="form-control" v-model="formData.preferred_pronouns" required>
                 <option value="">Please choose an option</option>
@@ -86,26 +87,32 @@
               </select>
             </div>
           </div>
-          <div class="col-md-4">
+
+        </div>
+        <div class="row">
+
+        </div>
+        <div class="row" v-if="formData.gender_identity === 'other' || formData.preferred_pronouns === 'other'">
+          <div class="col-md-4" v-if="formData.gender_identity === 'other'">
             <div class="form-group">
-              <label for="preferred_pronouns_other">Preferred Pronoun<i class="text-danger p-1 info-sm">*</i></label>
+              <label for="traveler_gender_id">Gender Identity Other<i class="text-danger p-1">*</i></label>
+              <input type="text" id="traveler_gender_id_other" v-model="formData.gender_identity_other"
+                class="form-control" :disabled="formData.gender_identity !== 'other'" />
+            </div>
+          </div>
+          <div :class="formData.gender_identity === 'other' ? 'col-md-4' : 'col-md-4 mx-auto'"
+            v-if="formData.preferred_pronouns === 'other'">
+            <div class="form-group">
+              <label for="preferred_pronouns_other">Preferred Pronouns Other<i
+                  class="text-danger p-1 info-sm">*</i></label>
               <input type="text" id="preferred_pronouns_other" v-model="formData.preferred_pronoun_other"
                 class="form-control" :disabled="formData.preferred_pronouns !== 'other'" />
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label for="date_of_birth">Birthday<i class="text-danger p-1 info-sm">*</i></label>
 
-              <input type="date" class="form-control" id="date_of_birth" name="date_of_birth"
-                v-model="formData.date_of_birth" min="1930-01-01" max="2099-12-31" />
-            </div>
-          </div>
-        </div>
         <div class="row">
-          <h6>Traveler's Contact Info</h6>
+          <h6>Traveler Contact Information</h6>
           <div class="col-md-4">
             <div class="form-group">
               <label for="email">
@@ -114,9 +121,9 @@
               </label>
 
               <input type="email" id="email" class="form-control" v-model="formData.email" placeholder="example@email.com"
-                required :ref="email" />
+                required />
               <i class="info-sm">
-                Please provide only the traveler’s email address
+                Please provide only the Traveler email address
               </i>
             </div>
           </div>
@@ -138,7 +145,7 @@
 
             <input type="tel" class="form-control" id="phone_number" placeholder="555-555-5555"
               v-model="formData.phone_number" required v-maska data-maska="+1 (###) ###-####" />
-            <i class="info-sm">Please provide only the traveler’s mobile phone number</i>
+            <i class="info-sm">Please provide only the Traveler mobile phone number</i>
           </div>
           <div class="col-md-2">
             <div class="form-group">
@@ -172,7 +179,7 @@
           </div>
           <div class="col-md-4">
             <div class="form-group">
-              <label>Grade Level<small class="text-danger p-2">*</small></label>
+              <label>Grade Level<i class="text-danger p-1">*</i></label>
               <select v-model="formData.grade" class="form-control">
                 <option value="">--Please Select and Option--</option>
                 <option value="7">7</option>
@@ -182,6 +189,7 @@
                 <option value="11">11</option>
                 <option value="12">12</option>
               </select>
+              <i class="info-sm">Please provide your grade level for the 2024-2025 school year.</i>
             </div>
           </div>
         </div>
@@ -189,8 +197,9 @@
           <div class="col-md-4">
             <div class="form-group">
               <div class="form-check">
-                <input class="form-check-input" type="checkbox" v-model="formData.host_family_request"
-                  id="host_family_request" checked="yes" />
+
+                <input type="checkbox" class="form-check-input" id="host_family_request"
+                  v-model="formData.host_family_request">
                 <label class="custom-control-label" for="host_family_request">Host Family Request<small
                     class="text-danger p-2">*</small></label>
               </div>
@@ -200,8 +209,17 @@
             </div>
           </div>
         </div>
+        <div class="row" v-if="formData.host_family_request">
+          <div class="col-4">
+            <div class="form-group">
+              <input type="text" class="form-control" />
+              <i class="info-sm">Enter Host Family Name</i>
+
+            </div>
+          </div>
+        </div>
         <div class="row">
-          <h6>Traveler's Address</h6>
+          <h6>Traveler Address</h6>
           <div class="col-md-4">
             <div class="form-group">
               <label for="address_1">
@@ -308,7 +326,7 @@
           </div>
         </div>
         <div class="row mt-2">
-          <h6>Parent Guardian 1</h6>
+          <h6>Parent/Guardian 1</h6>
           <div class="col-md-4">
             <div class="form-group">
               <label for="parent_first_name">
@@ -356,8 +374,19 @@
             </div>
           </div>
         </div>
-        <div class="row mt-2">
-          <h6>Parent Guardian 2</h6>
+        <div class="row p-4">
+          <div class="col-6">
+            <div class="form-group">
+              <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="secondary_parent_guardian"
+                  v-model="secondary_parent_guardian">
+                <label class="form-control-label" for="customCheckDisabled">Is there another Parent/Guardian?</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="row mt-2" v-if="secondary_parent_guardian">
+          <h6>Parent/Guardian 2</h6>
 
           <div class="col-md-4">
             <div class="form-group">
@@ -373,31 +402,32 @@
                 v-model="formData.parent_secondary.last_name" />
             </div>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label for="parent_secondary_email"> Email </label>
-              <input class="form-control" type="email" id="parent_secondary_email" placeholder="example@email.com"
-                v-model="formData.parent_secondary.email" />
+
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="parent_secondary_email"> Email </label>
+                <input class="form-control" type="email" id="parent_secondary_email" placeholder="example@email.com"
+                  v-model="formData.parent_secondary.email" />
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="parent_phone2"> Phone </label>
+                <input class="form-control" type="tel" id="parent_phone2" v-maska data-maska="+1 (###) ###-####"
+                  v-model="formData.parent_secondary.phone_number" />
+              </div>
             </div>
           </div>
-          <div class="col-md-4">
-            <div class="form-group">
-              <label for="parent_phone2"> Phone </label>
-              <input class="form-control" type="tel" id="parent_phone2" v-maska data-maska="+1 (###) ###-####"
-                v-model="formData.parent_secondary.phone_number" />
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-4">
-            <div class="form-group">
-              <label for="parent_secondary_relationship">
-                Relationship<i class="text-danger p-1 info-sm">*</i>
-              </label>
-              <input class="form-control" type="tel" id="parent_secondary_relationship"
-                v-model="formData.parent_secondary.relationship" />
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="parent_secondary_relationship">
+                  Relationship<i class="text-danger p-1 info-sm">*</i>
+                </label>
+                <input class="form-control" type="tel" id="parent_secondary_relationship"
+                  v-model="formData.parent_secondary.relationship" />
+              </div>
             </div>
           </div>
         </div>
@@ -446,7 +476,7 @@
         <div class="row">
           <div class="col-md-4 d-flex justify-content-center w-100">
             <div class="form-group">
-              <button type="button" class="btn btn-success btn-lg w-100" @click="submit()">
+              <button type="submit" class="btn btn-success btn-lg w-100">
                 Submit
               </button>
             </div>
@@ -462,10 +492,13 @@ import store from "@/store/index.js";
 import axios from "axios";
 import countries from "../../../utils/countries.js";
 import { vMaska } from "maska";
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
+
 export default {
   directives: { maska: vMaska },
   setup() {
-    console.log(store.state.user);
+
     let schools = reactive([]);
     let getSchoolsApi = store.state.apiUrl + "school";
 
@@ -483,7 +516,6 @@ export default {
       .then((r) => {
         const results = r;
 
-        console.log(results.data.schools);
         results.data.schools.forEach((school) => {
           schools.push(school);
         });
@@ -497,6 +529,9 @@ export default {
     // validation refs
 
     return {
+      secondary_parent_guardian: false,
+      latest_trip: null,
+      show_host_family_option: false,
       formData: {
         class: "traveler",
         first_name: "",
@@ -514,6 +549,7 @@ export default {
         school_id: null,
         grade: 7,
         host_family_request: false,
+        host_family_name: "",
         address_1: "",
         address_2: "",
         city: "",
@@ -543,7 +579,7 @@ export default {
           last_name: "",
           phone_number: "",
           email: "",
-          contact_type: "parent_guardian",
+          contact_type: "emergency",
           relationship: "",
         },
       },
@@ -559,7 +595,8 @@ export default {
     async getUserData() {
       var user = JSON.parse(localStorage.getItem("user"));
       var newApiUrl = this.$store.state.apiUrl + "user_with_trips/" + user.id;
-      console.log(user.id);
+
+
       await axios
         .get(newApiUrl, {
           headers: {
@@ -569,6 +606,7 @@ export default {
           },
         })
         .then((r) => {
+
           const result = r.data;
           this.userData = result.user;
           var user = result.user;
@@ -589,40 +627,25 @@ export default {
           this.formData.preferred_pronoun_other = user.preferred_pronoun_other ?? "";
           this.formData.school_id = user.school_id ?? "";
           this.formData.grade = user.grade ?? "";
-          this.formData.host_family_request = user.host_family_request ?? "";
+          this.formData.host_family_request = user.host_family_request ?? false;
           this.formData.address_1 = user.address_1 ?? "";
           this.formData.address_2 = user.address_2 ?? "";
           this.formData.city = user.city ?? "";
           this.formData.state_province = user.state_province ?? "";
           this.formData.postal_code = user.postal_code ?? "";
           this.formData.country_code = user.country_code ?? "US";
-          this.formData.t_shirt_size = user.t_shirt_size.toLowerCase() ?? "";
+          this.formData.t_shirt_size = user.t_shirt_size ? user.t_shirt_size.toLowerCase() : "";
+          this.latest_trip = user.trips[0] ?? null;
 
-          // parent: {
-          this.formData.parent.first_name = "";
-          this.formData.parent.last_name = "";
-          this.formData.parent.phone_number = "";
-          this.formData.parent.email = "";
-          this.formData.parent.contact_type = "parent_guardian";
-          this.formData.parent.relationship = "";
-          // },
-          // parent_secondary: {
-          //   first_name: "",
-          //   last_name: "",
-          //   phone_number: "",
-          //   email: "",
-          //   contact_type: "parent_guardian",
-          //   relationship: "",
-          // },
-          // emergency_contact: {
-          //   first_name: "",
-          //   last_name: "",
-          //   phone_number: "",
-          //   email: "",
-          //   contact_type: "parent_guardian",
-          //   relationship: "",
-          // },
-          // }
+          // this.formData.parent.first_name = "";
+          // this.formData.parent.last_name = "";
+          // this.formData.parent.phone_number = "";
+          // this.formData.parent.email = "";
+          // this.formData.parent.contact_type = "parent_guardian";
+          // this.formData.parent.relationship = "";
+
+
+
         })
         .catch((e) => {
           this.showError = true;
@@ -630,72 +653,158 @@ export default {
           this.error.message = e
         });
     },
-    async submit() {
+    async getGuardianData() {
+
+      var user = JSON.parse(localStorage.getItem("user"));
+      var newApiUrl = this.$store.state.apiUrl + "user_with_parent/" + user.id;
+      axios.get(newApiUrl, {
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          Authorization: "Bearer " + localStorage.token,
+        },
+      }).then(res => {
+
+
+        //grab the user
+        let userData = res.data.user;
+        // grab the contact array
+        let contactArray = userData.contacts;
+        console.log(contactArray[0]?.first_name)
+
+        // first guardian
+        this.formData.parent.first_name = contactArray[0]?.first_name;
+        this.formData.parent.last_name = contactArray[0]?.last_name;
+
+
+        this.formData.parent.phone_number = contactArray[0]?.phone_number;
+        this.formData.parent.email = contactArray[0]?.email;
+        this.formData.parent.contact_type = "parent_guardian";
+        this.formData.parent.relationship = contactArray[0]?.relationship;
+
+
+
+        // todo  Need to check for secondary parent_guardian
+        console.log(contactArray, "contacts")
+        // secondary guardian is optional. checking against null
+        if (contactArray.length === 3) {
+          this.secondary_parent_guardian = true;
+          this.formData.parent_secondary.first_name = contactArray[1].first_name;
+          this.formData.parent_secondary.last_name = contactArray[1].last_name;
+
+          this.formData.parent_secondary.phone_number = contactArray[1].phone_number;
+          this.formData.parent_secondary.email = contactArray[1].email;
+          this.formData.parent_secondary.contact_type = "parent_guardian";
+          this.formData.parent_secondary.relationship = contactArray[1].relationship;
+
+          //set proper emergency 
+          this.formData.emergency_contact.first_name = contactArray[2].first_name;
+          this.formData.emergency_contact.last_name = contactArray[2].last_name;
+
+          this.formData.emergency_contact.email = contactArray[2].email ?? "";
+          this.formData.emergency_contact.contact_type = "emergency";
+          this.formData.emergency_contact.relationship = contactArray[2].relationship;
+          this.formData.emergency_contact.phone_number = contactArray[2].phone_number;
+
+        } else {
+
+          // emergency contact is in index 1 since there is only 2 in the array
+          this.formData.emergency_contact.first_name = contactArray[1]?.first_name;
+          this.formData.emergency_contact.last_name = contactArray[1]?.last_name;
+
+          this.formData.emergency_contact.email = contactArray[1]?.email ?? "";
+          this.formData.emergency_contact.contact_type = "emergency";
+          this.formData.emergency_contact.relationship = contactArray[1]?.relationship;
+          this.formData.emergency_contact.phone_number = contactArray[1]?.phone_number;
+        }
+
+
+
+
+      }).catch(err => {
+        console.error(err);
+      })
+    },
+    submit() {
+
       const user = JSON.parse(localStorage.getItem("user"));
       var newApiUrl = this.$store.state.apiUrl + "user/" + user.id;
 
-      if (this.formData.email !== this.formData.email_confirmation) {
-        this.showError = true;
+      // todo add validation  logic.
+      let contactList = [
+        this.formData.parent,
+        this.formData.parent_secondary,
+        this.formData.emergency_contact,
+      ];
 
-        this.error.message = "Email address does not match.";
-        return;
+
+      console.log(contactList, "contact list")
+
+      if (!this.secondary_parent_guardian) {
+
+        contactList.splice(1, 1);
+
       }
 
-
-      const contactList = [
-        { ...this.formData.parent },
-        { ...this.formData.parent_secondary },
-        { ...this.formData.emergency_contact },
-      ];
-      if (this.form)
-        await axios
-          .put(
-            newApiUrl,
-            {
-              class: this.formData.class,
-              first_name: this.formData.first_name,
-              middle_name: this.formData.middle_name,
-              last_name: this.formData.last_name,
-              email: this.formData.email,
-              email_confirmation: this.formData.email_confirmation,
-              date_of_birth: this.formData.date_of_birth, // Must be formatted as YYYY-MM-DD
-              phone_number: this.formData.phone_number,
-              t_shirt_size: this.formData.t_shirt_size,
-              gender: this.formData.gender,
-              gender_identity: this.formData.gender_identity,
-              address_1: this.formData.address_1, // Can be left null if not provided
-              address_2: this.formData.address_2, // Can be left null if not provided
-              city: this.formData.city, // Can be left null if not provided
-              state_province: this.formData.state_province, // Can be left null if not provided
-              postal_code: this.formData.postal_code, // Can be left null if not provided
-              country_code: this.formData.country_code, // Can be left null if not provided
-              preferred_pronouns: this.formData.preferred_pronouns, // Can be left null if not provided
-              preferred_pronouns_other: this.formData.preferred_pronoun_other,
-              school_id: this.formData.school_id, // Must be a valid school from the DB
-              grade: this.formData.grade, // Can be grades 7 through 12
-              host_family_request: this.formData.host_family_request,
-              metadata: [],
-              contacts: [],
+      axios
+        .put(
+          newApiUrl,
+          {
+            class: this.formData.class,
+            first_name: this.formData.first_name,
+            middle_name: this.formData.middle_name,
+            last_name: this.formData.last_name,
+            email: this.formData.email,
+            email_confirmation: this.formData.email_confirmation,
+            date_of_birth: this.formData.date_of_birth, // Must be formatted as YYYY-MM-DD
+            phone_number: this.formData.phone_number,
+            t_shirt_size: this.formData.t_shirt_size,
+            gender: this.formData.gender,
+            gender_identity: this.formData.gender_identity,
+            address_1: this.formData.address_1, // Can be left null if not provided
+            address_2: this.formData.address_2, // Can be left null if not provided
+            city: this.formData.city, // Can be left null if not provided
+            state_province: this.formData.state_province, // Can be left null if not provided
+            postal_code: this.formData.postal_code, // Can be left null if not provided
+            country_code: this.formData.country_code, // Can be left null if not provided
+            preferred_pronouns: this.formData.preferred_pronouns, // Can be left null if not provided
+            preferred_pronouns_other: this.formData.preferred_pronoun_other,
+            school_id: this.formData.school_id, // Must be a valid school from the DB
+            grade: this.formData.grade, // Can be grades 7 through 12
+            host_family_request: this.formData.host_family_request,
+            metadata: [],
+            contacts: contactList,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: "Bearer " + localStorage.token,
             },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                Authorization: "Bearer " + localStorage.token,
-              },
-            }
-          )
-          .then((result) => {
-            console.log(result)
-          })
-          .catch((error) => {
-            console.error(error)
-          });
+          }
+        )
+        .then((result) => {
+
+          if (result) {
+
+            toast.success("Profile updated Successfully!", { autoClose: 600, position: toast.POSITION.BOTTOM_CENTER });
+
+
+          }
+
+        })
+        .catch((error) => {
+          // todo grab specific error to display to user.
+          console.error(error);
+          toast.error("Unable to update Profile" + this.error.message, { autoClose: 600, position: toast.POSITION.BOTTOM_CENTER });
+
+        });
     },
 
   },
   beforeMount() {
     this.getUserData()
+    this.getGuardianData();
   },
   watch: {
     t_shirt_size: (newSize, oldSize) => {
@@ -711,7 +820,7 @@ export default {
 }
 
 .info-sm {
-  font-size: 0.5rem;
+  font-size: 0.80rem;
   margin: 0;
   padding: 0;
   white-space: pre;

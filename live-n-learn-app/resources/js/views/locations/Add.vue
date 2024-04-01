@@ -14,12 +14,14 @@
                         <form>
                             <div class="form-group">
                                 <label for="location">Location Name</label>
-                                <input type="text" class="form-control" id="location" placeholder="Location Name" v-model="formdata.name">
+                                <input type="text" class="form-control" id="location" placeholder="Location Name"
+                                    v-model="formdata.name">
                             </div>
 
                             <div class="form-group">
                                 <label for="location_type">State/Province</label>
-                                <input type="text" class="form-control" id="location_province" placeholder="Enter State/Province" v-model="formdata.state_province">
+                                <input type="text" class="form-control" id="location_province"
+                                    placeholder="Enter State/Province" v-model="formdata.state_province">
                             </div>
 
                             <div class="form-group">
@@ -307,6 +309,7 @@
 <script>
 import { DataTable } from "simple-datatables";
 import axios from "axios";
+import { toast } from "vue3-toastify";
 
 export default {
     name: "DataTables",
@@ -345,7 +348,13 @@ export default {
 
                 console.log(result);
 
-                this.$router.push({ path: '/locations/view', replace: true });
+                toast.success('Location Successfully added', { position: toast.POSITION.TOP_CENTER, autoClose: 10000 });
+                setTimeout(() => {
+                    this.$router.push('/locations/view');
+                }, 1000);
+
+
+
 
             }).catch(e => {
                 console.log(e.message);

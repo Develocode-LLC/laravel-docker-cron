@@ -18,7 +18,8 @@ class InvoiceItem extends Model
         'invoice_id',
         'name',
         'description',
-        'line_total'
+        'line_total',
+        'primary'
     ];
 
     /**

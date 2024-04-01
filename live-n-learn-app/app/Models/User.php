@@ -61,6 +61,7 @@ class User extends Authenticatable
         'scholarships',
         'previously_hosted',
         'previously_hosted_year',
+        'default_payment_method_id'
     ];
 
     /**
@@ -94,7 +95,7 @@ class User extends Authenticatable
 
         if (!empty($value) && Storage::exists($value))
         {
-            $aws_file_location = Storage::temporaryUrl($value, now()->addMinutes(30));
+            $aws_file_location = Storage::temporaryUrl($value, now()->addHours(24));
 
             return $aws_file_location;
         }
@@ -150,9 +151,7 @@ class User extends Authenticatable
      */
     public function payment_methods()
     {
-        return ($this->class == 'traveler') ? 
-            $this->hasMany(UserPaymentMethod::class, 'user_id') : 
-            null;
+        return $this->hasMany(UserPaymentMethod::class, 'user_id');
     }
 
     /**
@@ -174,4 +173,23 @@ class User extends Authenticatable
     {
         return $this->belongsTo(User::class, 'parent_user_id');
     }
+
+    /**
+     * Get all of the children for the User
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function children()
+    {
+        return $this->hasMany(User::class, 'parent_user_id');
+    }
+
+    /**
+     * Get the medical_information associated with the user.
+     */
+    public function medical_information()
+    {
+        return $this->hasOne(UserMedicalInformation::class);
+    }
+
 }

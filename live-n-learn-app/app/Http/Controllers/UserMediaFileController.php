@@ -29,8 +29,8 @@ class UserMediaFileController extends Controller
     {
         $auth_user = Auth::user();
 
-        $is_same_user = ($auth_user === $user);
-        $isnot_same_user_but_admin = ($auth_user !== $user && $auth_user->class == 'administrator');
+        $is_same_user = ($auth_user->id === $user->id);
+        $isnot_same_user_but_admin = ($auth_user->id !== $user->id && $auth_user->class == 'administrator');
 
         if(!$is_same_user && !$isnot_same_user_but_admin)
         {

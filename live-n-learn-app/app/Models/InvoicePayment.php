@@ -20,7 +20,12 @@ class InvoicePayment extends Model
         'payment_method',
         'date',
         'amount',
+        'fees',
         'notes',
+    ];
+
+    protected $appends = [
+        'amount_with_fees',
     ];
 
     /**
@@ -31,5 +36,16 @@ class InvoicePayment extends Model
     public function invoice()
     {
         return $this->belongsTo(Invoice::class);
+    }
+
+    /**
+     * Get the total of the Invoice.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function getAmountWithFeesAttribute()
+    {
+        return round($this->amount + $this->fees, 2);
     }
 }

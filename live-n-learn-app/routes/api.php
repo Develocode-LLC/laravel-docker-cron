@@ -23,6 +23,7 @@ use App\Http\Controllers\MasterItineraryImageController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UserMediaFileController;
 use App\Http\Controllers\UserPaymentMethodController;
+use App\Http\Controllers\UserMedicalInformationController;
 
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\InvoiceItemController;
@@ -35,7 +36,11 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\MediaFileController;
 
 use App\Http\Controllers\UserTripController;
-use App\Http\Controllers\FormSignatureController;
+use App\Http\Controllers\FormController;
+use App\Http\Controllers\TripFormController;
+use App\Http\Controllers\TripFormSignatureController;
+
+use App\Http\Controllers\TripUserCancellationInsuranceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -90,6 +95,8 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('user', UserController::class);
         Route::apiResource('user/{user}/user_media_file', UserMediaFileController::class)->except(['update']);
         Route::apiResource('user/{user}/user_payment_method', UserPaymentMethodController::class)->except(['update']);
+        Route::apiResource('user/{user}/user_medical_information', UserMedicalInformationController::class)
+            ->except(['show', 'destroy']);
 
         // GET
         Route::get('profile', [UserController::class, 'profile']);
@@ -98,6 +105,9 @@ Route::prefix('v1')->group(function () {
 
         // POST
         Route::post('user/{user}/upload_passport', [UserController::class, 'upload_passport']);
+        Route::post('user/{user}/user_payment_method/{user_payment_method}/verify', 
+            [UserPaymentMethodController::class, 'verify']
+        );
 
         /*
         |--------------------------------------------------------------------------
@@ -134,9 +144,10 @@ Route::prefix('v1')->group(function () {
         */
         // API Resources
         Route::apiResource('trip', TripController::class);
-        Route::apiResource('trip/{trip}/trip_itinerary', TripItineraryController::class)->except(['destroy']);
+        Route::apiResource('trip/{trip}/trip_itinerary', TripItineraryController::class)->only(['index', 'store']);
         Route::apiResource('trip/{trip}/trip_image', TripImageController::class)->except(['update']);
         Route::apiResource('trip/{trip}/trip_flight', TripFlightController::class);
+        Route::apiResource('trip/{trip}/form', TripFormController::class)->only(['index', 'update', 'destroy']);
 
         // GET
         Route::get('trip/{trip}/departure_flights', [TripFlightController::class, 'index_departure']);
@@ -159,7 +170,7 @@ Route::prefix('v1')->group(function () {
         */
         Route::apiResource('master_itinerary', MasterItineraryController::class);
         Route::apiResource('master_itinerary/{master_itinerary}/master_itinerary_index', 
-            MasterItineraryIndexController::class)->except(['destroy']);
+            MasterItineraryIndexController::class)->only(['index', 'store']);
         Route::apiResource('master_itinerary/{master_itinerary}/master_itinerary_image', 
             MasterItineraryImageController::class)->except(['update']);
         
@@ -205,6 +216,8 @@ Route::prefix('v1')->group(function () {
 
         // POST
         Route::post('invoice/{invoice}/make_payment', [InvoiceController::class, 'make_payment']);
+        Route::post('invoice/{invoice}/make_deposit_payment', [InvoiceController::class, 'make_deposit']);
+        Route::post('user/{user}/trip/{trip}/set_payment_plan', [InvoiceController::class, 'set_payment_plan']);
 
         /*
         |--------------------------------------------------------------------------
@@ -218,7 +231,16 @@ Route::prefix('v1')->group(function () {
         | Form Signature Routes
         |--------------------------------------------------------------------------
         */
-        Route::apiResource('user/{user}/trip/{trip}/form_signature', FormSignatureController::class);
+        Route::apiResource('form', FormController::class)->only(['index', 'show']);
+        Route::apiResource('trip/{trip}/form/{form}/user/{user}/trip_form_signature', 
+            TripFormSignatureController::class)->except(['show', 'update']);
+
+        /*
+        |--------------------------------------------------------------------------
+        | Trip Cancellation Insuranc Routes
+        |--------------------------------------------------------------------------
+        */
+        Route::apiResource('user/{user}/trip/{trip}/cancellation_insurance', TripUserCancellationInsuranceController::class)->only(['index', 'store']);
 
     });
 });

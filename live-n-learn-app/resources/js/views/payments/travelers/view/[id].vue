@@ -8,14 +8,120 @@
             <h5 class="mb-0">Your Prefered Payment Methods</h5>
             <p class="mb-0 text-sm">Use this to set your payment method</p>
           </div>
+          <ul class="nav nav-tabs">
+            <li class="nav-item">
+              <span class="nav-link active" aria-current="page" @click="(event) => handleTabView(event)">Credit
+                Card</span>
+            </li>
+            <li class="nav-item">
+              <span class="nav-link" @click="(event) => handleTabView(event)">ACH</span>
+            </li>
+          </ul>
           <div class="row">
-            <stripe-payment-method :form-function="'store'" />
+            <div class="col-5">
+              <stripe-payment-method :form-function="'store'" :userId="this.$route.params.id" />
+
+            </div>
+            <div class="col-5">
+              <stripe-ach-payment-method :form-function="'store'" />
+              <div class="row mt-3">
+                <div class="col-12">
+                  <button type="button" @click="makePurchase" class="btn bg-gradient-success">
+                    test purchase
+                  </button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+
+<script>
+import { useRoute } from "vue-router";
+import axios from "axios";
+import stripePaymentMethod from "@/components/stripePaymentMethod.vue";
+import stripeAchPaymentMethod from "@/components/stripeACHPaymentMethod.vue"
+
+export default {
+  components: { stripePaymentMethod, stripeAchPaymentMethod },
+  el: "#tabs",
+  data() {
+    return {
+      activetab: "1",
+      formdata: {
+        title: "",
+        description: "",
+        start_city: "",
+        dest_city: "",
+        cost: 0.0,
+        start_date: "",
+        end_date: "",
+        total_seats: "",
+        person: "",
+        checklists: "",
+        trip: {
+          coordinators: [],
+          checklist: [],
+        },
+      },
+    };
+  },
+  methods: {
+    addCoordinator() {
+      this.formdata.trip.coordinators.push(this.formdata.person);
+    },
+    addChecklist() {
+      this.formdata.trip.checklist.push(this.formdata.checklists);
+    },
+    handleTabView(event) {
+
+      const eventTab = event.target;
+      const activeTab = document.querySelector('.active')
+      if (!eventTab.classList.contains('active')) {
+        activeTab.classList.remove('active');
+        eventTab.classList.add('active');
+      }
+    },
+    async makePurchase() {
+      var newApiUrl = this.$store.state.apiUrl + 'invoice/12/make_payment';
+      // console.log(newApiUrl);
+      // return;
+      await axios
+        .post(
+          newApiUrl,
+          {
+            "stripe_customer_id": "cus_PnXiZhYn55DQ07",
+            "existing_payment_method": "card_1OyLD2G3gFtedN1v5cFMEimc",
+            "amount": 200.00
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Accept: "application/json",
+              Authorization: "Bearer " + localStorage.token,
+            },
+          }
+        )
+        .then((result) => {
+          console.log(result);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    },
+  },
+
+  mounted() {
+    const route = useRoute();
+    const paramId = route.params.id;
+
+    console.log(paramId);
+  },
+};
+</script>
 
 <style>
 /* Import Google Font */
@@ -107,51 +213,3 @@
   width: 120px;
 }
 </style>
-
-<script>
-import { useRoute } from "vue-router";
-import axios from "axios";
-import stripePaymentMethodVue from "@/components/stripePaymentMethod.vue";
-import stripePaymentMethod from "@/components/stripePaymentMethod.vue";
-
-export default {
-  components: { stripePaymentMethod },
-  el: "#tabs",
-  data() {
-    return {
-      activetab: "1",
-      formdata: {
-        title: "",
-        description: "",
-        start_city: "",
-        dest_city: "",
-        cost: 0.0,
-        start_date: "",
-        end_date: "",
-        total_seats: "",
-        person: "",
-        checklists: "",
-        trip: {
-          coordinators: [],
-          checklist: [],
-        },
-      },
-    };
-  },
-  methods: {
-    addCoordinator() {
-      this.formdata.trip.coordinators.push(this.formdata.person);
-    },
-    addChecklist() {
-      this.formdata.trip.checklist.push(this.formdata.checklists);
-    },
-  },
-
-  mounted() {
-    const route = useRoute();
-    const paramId = route.params.id;
-
-    console.log(paramId);
-  },
-};
-</script>

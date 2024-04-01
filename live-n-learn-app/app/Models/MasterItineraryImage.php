@@ -36,7 +36,7 @@ class MasterItineraryImage extends Model
 
         if (!empty($value) && Storage::exists($value))
         {
-            $aws_file_location = Storage::temporaryUrl($value, now()->addMinutes(30));
+            $aws_file_location = Storage::temporaryUrl($value, now()->addHours(24));
             return $aws_file_location;
         }
 

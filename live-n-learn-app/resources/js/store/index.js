@@ -3,7 +3,6 @@ import { createStore } from "vuex";
 export default createStore({
     state: {
         apiUrl: import.meta.env.VITE_API_URL,
-        stripeApiKey: import.meta.env.VITE_STRIPE_API_KEY,
         stripePublishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY,
         user: null,
         isNavFixed: false,

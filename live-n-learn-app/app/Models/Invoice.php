@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+use App\Models\TripUserCancellationInsurance;
+
 class Invoice extends Model
 {
     use HasFactory, SoftDeletes;
@@ -22,11 +24,15 @@ class Invoice extends Model
         'trip_id',
         'due_date',
         'comments',
-        'deleted_by_id'
+        'deleted_by_id',
+        'payment_plan_type',
+        'payment_method_type',
+        'default_payment_method_id'
     ];
 
     protected $with = [
         'invoice_items',
+        'additional_invoice_items',
         'invoice_payments',
         'recipient',
         'created_by'
@@ -34,10 +40,12 @@ class Invoice extends Model
 
     protected $appends = [
         'subtotal',
+        'total',
         'amount_paid',
         'amount_due',
         'invoice_number',
-        'issue_date'
+        'issue_date',
+        'deposit_amount'
     ];
 
     /**
@@ -47,7 +55,17 @@ class Invoice extends Model
      */
     public function invoice_items()
     {
-        return $this->hasMany(InvoiceItem::class, 'invoice_id');
+        return $this->hasMany(InvoiceItem::class, 'invoice_id')->where('invoice_items.primary', 1);
+    }
+
+    /**
+     * Get all of the additional_invoice_items for the Invoice
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function additional_invoice_items()
+    {
+        return $this->hasMany(InvoiceItem::class, 'invoice_id')->where('invoice_items.primary', 0);
     }
 
     /**
@@ -58,6 +76,16 @@ class Invoice extends Model
     public function invoice_payments()
     {
         return $this->hasMany(InvoicePayment::class, 'invoice_id');
+    }
+
+    /**
+     * Get all of the payment_plan for the Invoice
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function payment_plan()
+    {
+        return $this->hasMany(InvoicePaymentPlan::class, 'invoice_id');
     }
 
     /**
@@ -109,7 +137,18 @@ class Invoice extends Model
      */
     public function getSubtotalAttribute()
     {
-        return $this->invoice_items->sum('line_total');
+        return round($this->invoice_items->sum('line_total'), 2);
+    }
+
+    /**
+     * Get the total of the Invoice.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function getTotalAttribute()
+    {
+        return round($this->getSubtotalAttribute() + $this->additional_invoice_items->sum('line_total'), 2);
     }
 
     /**
@@ -120,7 +159,7 @@ class Invoice extends Model
      */
     public function getAmountPaidAttribute()
     {
-        return $this->invoice_payments->sum('amount');
+        return round($this->invoice_payments->sum('amount'), 2);
     }
 
     /**
@@ -131,9 +170,9 @@ class Invoice extends Model
      */
     public function getAmountDueAttribute()
     {
-        $amount_due = $this->getSubtotalAttribute() - $this->getAmountPaidAttribute();
+        $amount_due = $this->getTotalAttribute() - $this->getAmountPaidAttribute();
 
-        return $amount_due;
+        return round($amount_due, 2);
     }
 
     /**
@@ -147,5 +186,24 @@ class Invoice extends Model
         $issue_date = $this->created_at->format('Y-m-d');
 
         return $issue_date;
+    }
+
+    /**
+     * Get the deposit_amount on the Invoice.
+     *
+     * @param  string  $value
+     * @return void
+     */
+    public function getDepositAmountAttribute()
+    {
+        $selectedInsuranceOption = TripUserCancellationInsurance::where('user_id', $this->recipient_id)
+                                    ->where('trip_id', $this->trip_id)->first();
+
+        $insurance_cost = $selectedInsuranceOption ? $selectedInsuranceOption->amount : 0;
+
+        // Check that the amount if valid
+        $deposit_amount = 250 + $insurance_cost;
+
+        return $deposit_amount;
     }
 }

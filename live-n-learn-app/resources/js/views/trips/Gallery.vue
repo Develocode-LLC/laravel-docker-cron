@@ -21,6 +21,7 @@
                             placeholder="Description"
                             v-model="image_description"></textarea>
                           </div>
+                          <div v-if="showError" class="invalid-feedback2">{{ error.message }}</div>
                       <div class="form-group">
                         <label for="trip_description" style="display: block">Select Photos to Upload to Image Gallery(Multiple files allowed)</label>
                         <input name="file" type="file" placeholder="Upload Photos" multiple @change="onFileSelected" accept="image/*" data-classIcon="icon-plus" data-buttonText="Choose Image to Upload" ref="fileupload" />
@@ -28,7 +29,7 @@
                                                     class="fa fa-file" aria-hidden="true"></i>
                                                 Upload Images</button> -->
                       </div>
-                      
+
                     </div>
                   </div>
                   <div class="row ml-1">
@@ -36,11 +37,12 @@
                       <h5>Image Gallery</h5>
                     </div>
 
-                   
+
                     <div class="row">
 
                         <div v-for="files in mediaFilesList" class="col-lg-2 col-md-4 col-6">
                         <img :src="files.uri"  class="img-fluid img-thumbnail" :key="files.id" :title="files.description" />
+                        <div class="row mx-auto"><small>{{ files.description }}</small></div>
                         <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-2">
                             <button @click="removeFromGallery(files.id)" type="button" class="btn bg-gradient-warning btn-sm me-md-2"><i class="fa fa-trash" aria-hidden="true"></i> Delete </button>
                         </div>
@@ -62,6 +64,7 @@ import { DataTable } from "simple-datatables";
 import axios from "axios";
 import store from "@/store/index.js";
 import { ref } from 'vue';
+import { toast } from "vue3-toastify";
 
 export default {
     name: "DataTables",
@@ -91,13 +94,25 @@ export default {
 
                 });
             })
-            .catch((error) => {
-                console.error(error);
+            .catch((e) => {
+                console.log(e);
+          console.log(e.response.data.errors);
+          this.showError = true;
+          toast.error(e.response.data.message, { postion: toast.POSITION.BOTTOM_CENTER, autoClose: 10000 });
+
+          //message
+          this.error.message = e.response.data.errors;
+
+		  this.$forceUpdate();
             });
 
 
         return {
-            mediaFilesList
+            mediaFilesList,
+            showError: false,
+            error: {
+                message: "",
+            },
         }
     },
     methods: {
@@ -122,16 +137,18 @@ export default {
                         const result = r.data;
 
                         console.log(result);
+                        toast.success('Image was removed', { postion: toast.POSITION.BOTTOM_CENTER, autoClose: 10000 });
                         this.refreshToGallery();
                     })
                     .catch((e) => {
-                        console.log(e);
-                        console.log(e.message);
+                        console.log(e.response.data.errors);
+          this.showError = true;
+          toast.error(e.response.data.message, { postion: toast.POSITION.BOTTOM_CENTER, autoClose: 10000 });
 
-                        this.showError = true;
+          //message
+          this.error.message = e.response.data.errors;
 
-                        //message
-                        this.error.message = e.message;
+		  this.$forceUpdate();
                     });
 
             }
@@ -166,16 +183,18 @@ export default {
                         const result = r.data;
 
                         console.log(result);
+                        toast.success('Image was added', { postion: toast.POSITION.BOTTOM_CENTER, autoClose: 10000 });
                         this.refreshToGallery();
                     })
                     .catch((e) => {
-                        console.log(e);
-                        console.log(e.message);
-
+                        console.log(e.response.data.errors);
                         this.showError = true;
+                        toast.error('There was an error uploading your image. Please try again.', { postion: toast.POSITION.BOTTOM_CENTER, autoClose: 10000 });
 
                         //message
-                        this.error.message = e.message;
+                        this.error.message = e.response.data.errors;
+
+                        this.$forceUpdate();
                     });
             }
         },
@@ -203,8 +222,15 @@ export default {
                     });
                     this.$forceUpdate();
                 })
-                .catch((error) => {
-                    console.error(error);
+                .catch((e) => {
+                    console.log(e.response.data.errors);
+                    this.showError = true;
+                    toast.error(e.response.data.message, { postion: toast.POSITION.BOTTOM_CENTER, autoClose: 10000 });
+
+                    //message
+                    this.error.message = e.response.data.errors;
+
+                    this.$forceUpdate();
                 });
         },
         onFileSelected(event) {

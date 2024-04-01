@@ -16,54 +16,30 @@
         <div class="row">
           <div class="col-12 col-sm-2">
             <div class="dropdown">
-              <button
-                class="btn btn-secondary dropdown-toggle w-100"
-                type="button"
-                data-bs-toggle="dropdown"
-                aria-expanded="false"
-              >
+              <button class="btn btn-secondary dropdown-toggle w-100" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
                 {{ router.params.year ?? "Select Year" }}
               </button>
               <ul class="dropdown-menu">
                 <li>
-                  <a
-                    class="dropdown-item"
-                    href="/dashboards/dashboard-default/2024"
-                    >2024</a
-                  >
+                  <a class="dropdown-item" href="/dashboards/dashboard-default/2024">2024</a>
                 </li>
                 <li>
-                  <a
-                    class="dropdown-item"
-                    href="/dashboards/dashboard-default/2023"
-                    >2023</a
-                  >
+                  <a class="dropdown-item" href="/dashboards/dashboard-default/2023">2023</a>
                 </li>
                 <li>
-                  <a
-                    class="dropdown-item"
-                    href="/dashboards/dashboard-default/2022"
-                    >2022</a
-                  >
+                  <a class="dropdown-item" href="/dashboards/dashboard-default/2022">2022</a>
                 </li>
               </ul>
             </div>
           </div>
           <div class="col-12 col-sm-2">
-            <button
-              type="button"
-              @click="scrollToClass('.outbound-heading')"
-              class="btn btn-info w-100"
-            >
+            <button type="button" @click="scrollToClass('.outbound-heading')" class="btn btn-info w-100">
               <i class="fa fa-plane" aria-hidden="true"></i> Outbound
             </button>
           </div>
           <div class="col-12 col-sm-2">
-            <button
-              class="btn btn-warning w-100"
-              type="button"
-              @click="scrollToClass('.inbound-heading')"
-            >
+            <button class="btn btn-warning w-100" type="button" @click="scrollToClass('.inbound-heading')">
               <i class="fa fa-plane" aria-hidden="true"></i> Inbound
             </button>
           </div>
@@ -81,11 +57,7 @@
           </div>
 
           <div class="row">
-            <div
-              class="col-lg-12 mx-auto m-2"
-              v-for="trip in filteredOutboundArray"
-              v-bind:key="trip"
-            >
+            <div class="col-lg-12 mx-auto m-2" v-for="trip in filteredOutboundArray" v-bind:key="trip">
               <div class="card">
                 <div class="p-3 pb-0 card-header">
                   <div class="d-flex align-items-center">
@@ -97,12 +69,9 @@
                   <div class="row">
                     <div class="text-center col-12 col-sm-5 mt-5">
                       <h4 class="font-weight-bold text-center">
-                        <i class="fa fa-users text-black p-2"></i
-                        ><span class="text-info">
-                          {{ trip.total_travelers }}</span
-                        ><span class="fs-6 d-block text-body text-uppercase"
-                          >Number of Travelers</span
-                        >
+                        <i class="fa fa-users text-black p-2"></i><span class="text-info">
+                          {{ trip.total_travelers }}</span><span class="fs-6 d-block text-body text-uppercase">Number of
+                          Travelers</span>
                       </h4>
                     </div>
                     <div class="col-12 col-sm-7 px-xs-0">
@@ -112,12 +81,8 @@
                             <tr>
                               <td>
                                 <div class="px-2 py-0 d-flex">
-                                  <span class="badge bg-gradient-primary me-2"
-                                    >&nbsp;</span
-                                  >
-                                  <div
-                                    class="d-flex flex-column justify-content-center"
-                                  >
+                                  <span class="badge bg-gradient-primary me-2">&nbsp;</span>
+                                  <div class="d-flex flex-column justify-content-center">
                                     <h6 class="mb-0 text-sm">
                                       Number of Group Leaders
                                     </h6>
@@ -133,12 +98,8 @@
                             <tr>
                               <td>
                                 <div class="px-2 py-0 d-flex">
-                                  <span class="badge bg-gradient-secondary me-3"
-                                    >&nbsp;</span
-                                  >
-                                  <div
-                                    class="d-flex flex-column justify-content-center"
-                                  >
+                                  <span class="badge bg-gradient-secondary me-3">&nbsp;</span>
+                                  <div class="d-flex flex-column justify-content-center">
                                     <h6 class="mb-0 text-sm">Male Travelers</h6>
                                   </div>
                                 </div>
@@ -152,12 +113,8 @@
                             <tr>
                               <td>
                                 <div class="px-2 py-0 d-flex">
-                                  <span class="badge bg-gradient-info me-3"
-                                    >&nbsp;</span
-                                  >
-                                  <div
-                                    class="d-flex flex-column justify-content-center"
-                                  >
+                                  <span class="badge bg-gradient-info me-3">&nbsp;</span>
+                                  <div class="d-flex flex-column justify-content-center">
                                     <h6 class="mb-0 text-sm">
                                       Number of Female Travelers
                                     </h6>
@@ -166,19 +123,14 @@
                               </td>
                               <td class="text-sm text-center align-middle">
                                 <span class="text-xs font-weight-bold">
-                                  {{ trip.female_travelers }}</span
-                                >
+                                  {{ trip.female_travelers }}</span>
                               </td>
                             </tr>
                             <tr>
                               <td>
                                 <div class="px-2 py-0 d-flex">
-                                  <span class="badge bg-gradient-success me-3"
-                                    >&nbsp;</span
-                                  >
-                                  <div
-                                    class="d-flex flex-column justify-content-center"
-                                  >
+                                  <span class="badge bg-gradient-success me-3">&nbsp;</span>
+                                  <div class="d-flex flex-column justify-content-center">
                                     <h6 class="mb-0 text-sm">
                                       Number of Male Group leaders:
                                     </h6>
@@ -187,19 +139,14 @@
                               </td>
                               <td class="text-sm text-center align-middle">
                                 <span class="text-xs font-weight-bold">
-                                  {{ trip.male_leaders }}</span
-                                >
+                                  {{ trip.male_leaders }}</span>
                               </td>
                             </tr>
                             <tr>
                               <td>
                                 <div class="px-2 py-0 d-flex">
-                                  <span class="badge bg-gradient-warning me-3"
-                                    >&nbsp;</span
-                                  >
-                                  <div
-                                    class="d-flex flex-column justify-content-center"
-                                  >
+                                  <span class="badge bg-gradient-warning me-3">&nbsp;</span>
+                                  <div class="d-flex flex-column justify-content-center">
                                     <h6 class="mb-0 text-sm">
                                       Number of Female Group leaders
                                     </h6>
@@ -208,8 +155,7 @@
                               </td>
                               <td class="text-sm text-center align-middle">
                                 <span class="text-xs font-weight-bold">
-                                  {{ trip.female_leaders }}</span
-                                >
+                                  {{ trip.female_leaders }}</span>
                               </td>
                             </tr>
                           </tbody>
@@ -335,7 +281,7 @@ export default {
     const router = useRoute();
 
     onMounted(() => {
-      console.log("Hello World");
+      // console.log("Hello World");
     });
 
     return {

@@ -2,18 +2,15 @@
   <div id="sidenav-collapse-main" class="w-auto h-auto collapse navbar-collapse max-height-vh-100 h-100">
     <ul class="navbar-nav">
       <li class="nav-item">
-        <sidenav-collapse collapse-ref="dashboardsExamples" nav-text="Dashboard"
-          :class="getRoute() === 'dashboards' ? 'active' : ''">
+        <sidenav-collapse
+          nav-text="My Dashboard"
+          :collapse="false"
+          @click="$router.push({ name: defaultRoute })"
+          :aria-controls="''"
+          :class="getRoute() === 'dashboards' ? 'active' : ''"
+        >
           <template #icon>
             <icon name="dashboard" />
-          </template>
-          <template #list>
-            <ul class="nav ms-4 ps-3">
-              <!-- nav links -->
-              <sidenav-item :to="{
-                name: defaultRoute,
-              }" mini-icon="" text="Live N Learn" />
-            </ul>
           </template>
         </sidenav-collapse>
       </li>
@@ -251,7 +248,7 @@
       </li>
 
       <li class="nav-item">
-        <sidenav-collapse collapse-ref="pagesExamples" nav-text="Forms"
+        <sidenav-collapse collapse-ref="pagesExamples" nav-text="Registration"
           :class="getRoute() === 'checklist' ? 'active' : ''"
           v-if="authUserRole === 'traveler' || authUserRole === 'parent'">
           <template #icon>
@@ -277,7 +274,7 @@
                 <span class="nav-link" @click="
                   $router.push({ path: '/travelers/program/form_traveler' })
                   ">
-                  <span class="sidenav-normal"> Traveler Info </span>
+                  <span class="sidenav-normal"> Traveler Information </span>
                   <!-- <lnl-circular-progress-bar percentage="30" /> -->
                 </span>
               </li>
@@ -286,7 +283,7 @@
                   $router.push({ path: '/travelers/program/form_health' })
                   ">
                   <span class="sidenav-mini-icon"></span>
-                  <span class="sidenav-normal"> Health Form</span>
+                  <span class="sidenav-normal"> Health and Medical</span>
                   <!-- <lnl-circular-progress-bar percentage="30" /> -->
                 </span>
               </li>
@@ -304,14 +301,14 @@
                 </span>
               </li>
 
-              <li class="nav-item" v-if="authUserRole === 'traveler' || authUserRole === 'parent'">
+              <li class="nav-item" v-if="authUserRole === 'parent'">
                 <span class="nav-link" @click="
                   $router.push({ path: '/travelers/policy/terms-conditons' })
                   "><span class="sidenav-mini-icon"></span><span class="sidenav-normal">Terms and Conditions</span>
                   <!-- <lnl-circular-progress-bar percentage="75" /> -->
                 </span>
               </li>
-              <li class="nav-item" v-if="authUserRole === 'traveler' || authUserRole === 'parent'">
+              <li class="nav-item" v-if="authUserRole === 'parent'">
                 <span class="nav-link" @click="
                   $router.push({ path: '/travelers/policy/student-coc' })
                   "><span class="sidenav-mini-icon"></span><span class="sidenav-normal">Student Code of Conduct</span>
@@ -321,23 +318,51 @@
               <li class="nav-item" v-if="authUserRole === 'traveler' || authUserRole === 'parent'">
                 <span class="nav-link" @click="
                   $router.push({ path: '/travelers/policy/parent-consent' })
-                  "><span class="sidenav-mini-icon"></span><span class="sidenav-normal">Parent Consent</span>
+                  "><span class="sidenav-mini-icon"></span><span class="sidenav-normal">Parent Release</span>
                   <!-- <lnl-circular-progress-bar percentage="75" /> -->
                 </span>
               </li>
-              <li class="nav-item" v-if="authUserRole === 'traveler' || authUserRole === 'parent'">
+              <li class="nav-item" v-if="authUserRole === 'parent'">
                 <span class="nav-link" @click="
                   $router.push({ path: '/travelers/policy/cancel-policy' })
                   "><span class="sidenav-mini-icon"></span><span class="sidenav-normal">Cancellation Policy</span>
                   <!-- <lnl-circular-progress-bar percentage="75" /> -->
                 </span>
               </li>
+
+              <!-- <li class="nav-item" v-if="authUserRole === 'traveler' || authUserRole === 'parent'">
+                <span class="nav-link" @click="
+            $router.push({
+              path: '/travelers/program/alt-flight-request',
+            })
+            "><span class="sidenav-mini-icon"></span><span class="sidenav-normal">Alt. Flight Request Form</span>
+                  <lnl-circular-progress-bar percentage="75" />
+                </span>
+              </li> -->
               <li class="nav-item" v-if="authUserRole === 'traveler' || authUserRole === 'parent'">
                 <span class="nav-link" @click="
                   $router.push({
-                    path: '/travelers/policy/medical-insurance',
+                    path: '/travelers/program/payment-plan',
                   })
-                  "><span class="sidenav-mini-icon"></span><span class="sidenav-normal">Medical Insurance Policy</span>
+                  "><span class="sidenav-mini-icon"></span><span class="sidenav-normal">Payment Plan</span>
+                  <!-- <lnl-circular-progress-bar percentage="75" /> -->
+                </span>
+              </li>
+              <li class="nav-item" v-if="authUserRole === 'traveler' || authUserRole === 'parent'">
+                <span class="nav-link" @click="
+                  $router.push({
+                    path: '/travelers/program/optional-cancellation',
+                  })
+                  "><span class="sidenav-mini-icon"></span><span class="sidenav-normal">Cancellation Insurance</span>
+                  <!-- <lnl-circular-progress-bar percentage="75" /> -->
+                </span>
+              </li>
+              <li class="nav-item" v-if="authUserRole === 'traveler' || authUserRole === 'parent'">
+                <span class="nav-link" @click="
+                  $router.push({
+                    path: '/traveler/checkout',
+                  })
+                  "><span class="sidenav-mini-icon"></span><span class="sidenav-normal">Check Out</span>
                   <!-- <lnl-circular-progress-bar percentage="75" /> -->
                 </span>
               </li>
@@ -374,7 +399,7 @@
                   this.$router.push({
                     path: `/traveler/payment-method/${this.userId}`,
                   })
-                  "><span class="sidenav-mini-icon"></span><span class="sidenav-normal">Edit Payment
+                  "><span class="sidenav-mini-icon"></span><span class="sidenav-normal">Manage Payment
                     Method</span></span>
               </li>
             </ul>
@@ -455,7 +480,7 @@
         </sidenav-collapse>
       </li>
       <li class="nav-item">
-        <sidenav-collapse collapse-ref="pagesExamples" nav-text="My Program"
+        <sidenav-collapse collapse-ref="pagesExamples" nav-text="My Trips"
           :class="getRoute() === 'Reports' ? 'active' : ''"
           v-if="authUserRole === 'traveler' || authUserRole === 'parent'">
           <template #icon>
@@ -470,10 +495,10 @@
                   "><span class="fa fa-list"></span> &nbsp;<span class="sidenav-normal">Trip
                     Details</span></span>
               </li>
-              <li class="nav-item">
+              <!-- <li class="nav-item">
                 <span class="nav-link" @click="$router.push({ path: '' })"><span class="fa fa-plus"></span> &nbsp;<span
                     class="sidenav-normal">Travel Requests</span></span>
-              </li>
+              </li> -->
             </ul>
           </template>
         </sidenav-collapse>

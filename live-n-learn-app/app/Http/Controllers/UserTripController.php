@@ -119,7 +119,8 @@ class UserTripController extends Controller
             'invoice_items' => array(
                 array(
                     'name' => 'Trip Cost',
-                    'line_total' => $trip->total_cost
+                    'line_total' => $trip->total_cost,
+                    'primary' => 1
                 ),
             )
         );

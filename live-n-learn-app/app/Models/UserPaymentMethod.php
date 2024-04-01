@@ -12,7 +12,8 @@ class UserPaymentMethod extends Model
     use HasFactory;
 
     protected $fillable = [
-        'stripe_payment_method_id'
+        'stripe_payment_method_id',
+        'requires_verification'
     ];
 
     protected $appends = [
@@ -27,13 +28,27 @@ class UserPaymentMethod extends Model
      */
     public function getStripeObjectAttribute()
     {
+        $stripe_payment_method_obj;
         $stripe = new Stripe();
 
-        $stripe_payment_method_obj = $stripe->getPaymentMethod(
-            $this->user,
-            $this->stripe_payment_method_id
-        );
-
+        if($this->requires_verification)
+        {
+            if(str_starts_with($this->stripe_payment_method_id, 'ba_'))
+            {
+                $stripe_payment_method_obj = $stripe->getBankAccount(
+                    $this->user,
+                    $this->stripe_payment_method_id
+                );
+            }
+        }
+        else
+        {
+            $stripe_payment_method_obj = $stripe->getPaymentMethod(
+                $this->user,
+                $this->stripe_payment_method_id
+            );
+        }
+        
         return $stripe_payment_method_obj;
     }
 

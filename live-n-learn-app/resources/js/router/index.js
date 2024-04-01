@@ -40,6 +40,7 @@ import Settings from "../views/pages/Account/Settings.vue";
 import Billing from "../views/pages/Account/Billing.vue";
 import Invoice from "../views/pages/Account/Invoice.vue";
 import TravelerTrips from "../views/travelers/views/travelerTrips.vue";
+import TravelerTripDetails from "../views/travelers/views/trips/[id].vue";
 import Security from "../views/pages/Account/Security.vue";
 import Widgets from "../views/pages/Widgets.vue";
 import Basic from "../views/auth/signin/Basic.vue";
@@ -49,6 +50,7 @@ import ResetBasic from "../views/auth/reset/Basic.vue";
 import ResetVerify from "../views/auth/reset/verify.vue";
 import ResetCover from "../views/auth/reset/Cover.vue";
 import ResetIllustration from "../views/auth/reset/Illustration.vue";
+import passwordReset from "../views/auth/reset/password-reset.vue";
 import VerificationBasic from "../views/auth/verification/Basic.vue";
 import VerificationCover from "../views/auth/verification/Cover.vue";
 import VerificationIllustration from "../views/auth/verification/Illustration.vue";
@@ -150,7 +152,11 @@ import medicalInsurancePolicy from "../views/travelers/policies/medicalInsurance
 
 //payment imports
 import travelerPaymentMethod from "@/views/payments/travelers/view/[id].vue";
-
+import travelerInvoiceTable from "@/views/travelers/views/travelerInvoiceTable.vue";
+import alternatFlightRequest from "../views/travelers/forms/AlternateFlightReqForm.vue";
+import paymentPlanForm from "../views/travelers/forms/PaymentPlanForm.vue";
+import OptCancellationInsurance from "@/views/travelers/forms/OptCancellationInsurance.vue";
+import travelerCheckout from "@/views/payments/travelers/checkOut.vue";
 const routes = [
     {
         path: "/",
@@ -719,13 +725,21 @@ const routes = [
     },
     {
         path: "/traveler/trips",
-        name: "Traveler Details",
+        name: "Traveler Trips",
         component: TravelerTrips,
         props: true,
         meta: {
             requiresAuth: true,
         },
-
+    },
+    {
+        path: "/traveler/trips/:id",
+        name: "Trip Details",
+        component: TravelerTripDetails,
+        props: true,
+        meta: {
+            requiresAuth: true,
+        },
     },
     {
         path: "/groupleader/:id",
@@ -953,6 +967,15 @@ const routes = [
             requiresAuth: true,
         },
     },
+    {
+        path: "/traveler/invoices/:id",
+        name: "Traveler Invoice View",
+        component: travelerInvoiceTable,
+        props: true,
+        meta: {
+            requiresAuth: true,
+        },
+    },
 
     /**
      * Travelers consent Policy - Auroiah
@@ -987,7 +1010,7 @@ const routes = [
             requiresAuth: true,
         },
     },
-      /**
+    /**
      * Travelers cancel policy - Auroiah
      */
     {
@@ -998,7 +1021,7 @@ const routes = [
             requiresAuth: true,
         },
     },
-       /**
+    /**
      * Travelers medical insurance policy - Auroiah
      */
     {
@@ -1065,12 +1088,63 @@ const routes = [
             requiresAuth: true,
         },
     },
+    /**
+     * Alternate Flight Request Form- Auroiah
+     */
+    {
+        path: "/travelers/program/alt-flight-request",
+        name: "Alternate Flight Request",
+        component: alternatFlightRequest,
+        meta: {
+            requiresAuth: true,
+        },
+    },
+    /**
+     * Payment Plan Form- Auroiah
+     */
+    {
+        path: "/travelers/program/payment-plan",
+        name: "Payment Plans",
+        component: paymentPlanForm,
+        meta: {
+            requiresAuth: true,
+        },
+    },
+    /** Optional Cancellation Insurance - Auroiah */
+    {
+        path: "/travelers/program/optional-cancellation",
+        name: "Optional Cancellation Insurance",
+        component: OptCancellationInsurance,
+        meta: {
+            requiresAuth: true,
+        },
+    },
+    //forgot password
+    {
+        path: "/forgot-password",
+        name: "Forgot Password",
+        component: passwordReset,
+        meta: {},
+    },
+    //Traveler Checkout
+    {
+        path: "/traveler/checkout",
+        name: "Traveler Checkout",
+        component: travelerCheckout,
+        meta: {
+            requiresAuth: true,
+        },
+    },
 ];
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
     routes,
     linkActiveClass: "active",
+    scrollBehavior(to, from, savedPosition) {
+        // always scroll to top
+        return { top: 0 };
+    },
 });
 
 router.beforeEach((to, from, next) => {

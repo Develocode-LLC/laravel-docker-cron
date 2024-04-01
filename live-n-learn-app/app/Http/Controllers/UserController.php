@@ -67,7 +67,7 @@ class UserController extends Controller
         if($request->contacts)
         {
             $contacts_attributes = $this->validateContacts();
-            $user->contacts()->createMany($contacts_attributes);
+            $user->contacts()->createMany($contacts_attributes['contacts']);
         }
 
         if($user->class === 'traveler') $this->generate_account_number($user);
@@ -171,8 +171,8 @@ class UserController extends Controller
         {
             $contacts_attributes = $this->validateContacts();
 
-            $user->contacts()->delete();
-            $user->contacts()->createMany($contacts_attributes);
+            if($user->contacts) $user->contacts()->delete();
+            $user->contacts()->createMany($contacts_attributes['contacts']);
         }
 
         $user->refresh();
@@ -298,8 +298,8 @@ class UserController extends Controller
     {
         $auth_user = Auth::user();
 
-        $is_same_user = ($auth_user === $user);
-        $isnot_same_user_but_admin = ($auth_user !== $user && $auth_user->class == 'administrator');
+        $is_same_user = ($auth_user->id === $user->id);
+        $isnot_same_user_but_admin = ($auth_user->id !== $user->id && $auth_user->class == 'administrator');
 
         if(!$is_same_user && !$isnot_same_user_but_admin)
         {
@@ -455,7 +455,7 @@ class UserController extends Controller
     {
         return $attributes = request()->validate([
             'contacts' => 'nullable|array',
-            'contacts.*.contact_type' => 'required', // check each item in the array
+            'contacts.*.contact_type' => ['required', Rule::in(['parent_guardian','emergency'])], // check each item in the array
             'contacts.*.first_name' => 'required', // check each item in the array
             'contacts.*.last_name' => 'required', // check each item in the array
             'contacts.*.phone_number' => 'required', // check each item in the array

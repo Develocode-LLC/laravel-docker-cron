@@ -26,20 +26,15 @@ class TripItineraryController extends Controller
      */
     public function store(Request $request, Trip $trip)
     {
-        $attributes = $this->validateTripItinerary();
-        $existing_itinerary = $trip->itinerary()->where('itinerary_index', '>=', $attributes["itinerary_index"] )->orderBy('itinerary_index')->get();
-        $trip_itinerary = $trip->itinerary()->create($attributes);
+        $trip_itineraries;
+        $attributes_array = $this->validateCreateTripItineraryList();
 
-        foreach ($existing_itinerary as &$itinerary)
-        {
-            $current_tinerary_index = $itinerary['itinerary_index'];
-            $itinerary->update([
-                'itinerary_index' => $current_tinerary_index + 1
-            ]);
-        }
+        $trip->itinerary()->createMany($attributes_array['itinerary']);
+
+        $trip->refresh();
 
         $data = [
-            'trip_itinerary' => $trip_itinerary
+            'trip_itinerary' => $trip->itinerary
         ];
 
         return response()->json($data);
@@ -139,6 +134,19 @@ class TripItineraryController extends Controller
             'title' => 'required',
             'content' => 'required',
             'media_file_id' => 'nullable|exists:media_files,id',
+        ]);
+    }
+
+    function validateCreateTripItineraryList(): array
+    {
+        return $attributes = request()->validate([
+            'itinerary' => 'required|array',
+            'itinerary.*.itinerary_index' => 'required',
+            'itinerary.*.itinerary_date' => 'nullable|date',
+            'itinerary.*.time' => 'nullable|date_format:H:i:s',
+            'itinerary.*.title' => 'required',
+            'itinerary.*.content' => 'required',
+            'itinerary.*.media_file_id' => 'nullable|exists:media_files,id',
         ]);
     }
 

@@ -10,12 +10,71 @@
           </div>
           <div class="row">
             <stripe-payment-method :form-function="formType" />
+            <stripe-ach-payment-method />
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
+<script>
+import { useRoute } from "vue-router";
+import axios from "axios";
+import stripePaymentMethod from "@/components/stripePaymentMethod.vue";
+import stripeAchPaymentMethod from "@/components/stripeACHPaymentMethod.vue"
+import { ref } from Vue;
+
+export default {
+  components: { stripePaymentMethod, stripeAchPaymentMethod },
+  setup() {
+    let formType = ref("store");
+
+    console.log("This is from the paymentMethod.vue", formType.value);
+
+    return {
+      formType
+    }
+  },
+  // el: "#tabs",
+  // data() {
+  //   return {
+  //     activetab: "1",
+  //     formdata: {
+  //       title: "",
+  //       description: "",
+  //       start_city: "",
+  //       dest_city: "",
+  //       cost: 0.0,
+  //       start_date: "",
+  //       end_date: "",
+  //       total_seats: "",
+  //       person: "",
+  //       checklists: "",
+  //       trip: {
+  //         coordinators: [],
+  //         checklist: [],
+  //       },
+  //     },
+  //     form: "store",
+  //   };
+  // },
+  methods: {
+    addCoordinator() {
+      this.formdata.trip.coordinators.push(this.formdata.person);
+    },
+    addChecklist() {
+      this.formdata.trip.checklist.push(this.formdata.checklists);
+    },
+  },
+
+  mounted() {
+    const route = useRoute();
+    const paramId = route.params.id;
+
+    console.log(paramId);
+  },
+};
+</script>
 
 <style>
 /* Import Google Font */
@@ -107,61 +166,3 @@
   width: 120px;
 }
 </style>
-
-<script>
-import { useRoute } from "vue-router";
-import axios from "axios";
-import stripePaymentMethod from "@/components/stripePaymentMethod.vue";
-import {ref} from Vue;
-
-export default {
-  components: { stripePaymentMethod },
-  setup(){
-    let formType = ref("store");
-
-    console.log("This is from the paymentMethod.vue", formType.value);
-
-    return {
-      formType
-    }
-  },
-  // el: "#tabs",
-  // data() {
-  //   return {
-  //     activetab: "1",
-  //     formdata: {
-  //       title: "",
-  //       description: "",
-  //       start_city: "",
-  //       dest_city: "",
-  //       cost: 0.0,
-  //       start_date: "",
-  //       end_date: "",
-  //       total_seats: "",
-  //       person: "",
-  //       checklists: "",
-  //       trip: {
-  //         coordinators: [],
-  //         checklist: [],
-  //       },
-  //     },
-  //     form: "store",
-  //   };
-  // },
-  methods: {
-    addCoordinator() {
-      this.formdata.trip.coordinators.push(this.formdata.person);
-    },
-    addChecklist() {
-      this.formdata.trip.checklist.push(this.formdata.checklists);
-    },
-  },
-
-  mounted() {
-    const route = useRoute();
-    const paramId = route.params.id;
-
-    console.log(paramId);
-  },
-};
-</script>

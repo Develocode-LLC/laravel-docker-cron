@@ -175,4 +175,14 @@ class Trip extends Model
     {
         return $this->hasMany(TripFlight::class, 'trip_id')->where('trip_flights.type', 'return');
     }
+
+    /**
+     * Get all of the forms for the Trip
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function forms()
+    {
+        return $this->hasMany(TripForm::class, 'trip_id');
+    }
 }

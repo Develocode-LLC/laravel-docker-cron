@@ -19,11 +19,9 @@
                     <th>Trip Type</th>
                     <th>Trip Code</th>
                     <th>Outbound City</th>
-                    <th>Inbound City</th>
+                    <th>Destination</th>
                     <th>Beginning Date</th>
                     <th>End Date</th>
-                    <th>Available Seats</th>
-                    <th></th>
                     <th></th>
                   </tr>
                 </thead>
@@ -84,17 +82,13 @@ var newApiUrl = this.$store.state.apiUrl + "user_with_trips/" + user.id;
 
               this.tripList.forEach((trip) => {
 
-                  let btnViewTrip =   `<a class="btn btn-success" href="/trips/${trip.id}">
+                  let btnViewTrip =   `<a class="btn btn-success" href="/traveler/trips/${trip.id}">
                                           <i class="fa fa-plane" aria-hidden="true"></i> View Trip Details
-                                      </a>`;
-
-                  let btnDeleteTrip =   `<a class="btn btn-warning" href="/trips/delete/${trip.id}">
-                                          <i class="fa fa-trash" aria-hidden="true"></i> Delete
                                       </a>`;
 
                   let orig_city = trip.origination != null ? trip.origination.city : '';
                   let dest_city = trip.destinations.map(({name}) => name).join(', ');
-                  let rowArray = new Array(trip.title, trip.type.toUpperCase(), trip.code, orig_city, dest_city, trip.start_date, trip.end_date, `${trip.min_available_seats} Seats`, btnViewTrip, btnDeleteTrip);
+                  let rowArray = new Array(trip.title, trip.type.toUpperCase(), trip.code, orig_city, dest_city, trip.start_date, trip.end_date, btnViewTrip);
 
                   tripRows.push(rowArray);
               });

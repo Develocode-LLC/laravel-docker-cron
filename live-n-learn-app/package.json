@@ -8,7 +8,7 @@
     "devDependencies": {
         "@inertiajs/vue3": "^1.0.0",
         "@tailwindcss/forms": "^0.5.3",
-        "@vitejs/plugin-vue": "^4.0.0",
+        "@vitejs/plugin-vue": "^4.6.2",
         "autoprefixer": "^10.4.12",
         "axios": "^1.1.2",
         "eslint": "^8.11.0",
@@ -53,12 +53,14 @@
         "stripe": "^14.21.0",
         "three": "^0.157.0",
         "vue": "^3.2.25",
+        "vue-currency-input": "^3.1.0",
         "vue-flatpickr-component": "^9.0.5",
         "vue-round-slider": "1.0.1",
         "vue-router": "^4.2.5",
         "vue-stripe-js": "^1.0.2",
         "vue-sweetalert2": "^5.0.2",
         "vue-tilt.js": "^1.1.1",
+        "vue3-toastify": "^0.2.1",
         "vuex": "^4.0.2"
     }
 }

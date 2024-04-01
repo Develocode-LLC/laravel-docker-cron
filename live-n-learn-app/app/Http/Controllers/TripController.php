@@ -306,7 +306,7 @@ class TripController extends Controller
         $trip ??= new Trip();
 
         return $attributes = request()->validate([
-            'type' => ['required', Rule::in(['travel', 'homestay'])],
+            'type' => ['required', Rule::in(['travel', 'homestay', 'homestay_classes'])],
             'code' => 'required|unique:trips,code,' . $trip->id,
             'school_id' => 'nullable|exists:schools,id',
             'partner_id' => 'nullable|exists:partners,id',

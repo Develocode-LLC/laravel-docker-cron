@@ -14,23 +14,16 @@
       <div class="modal-body">
         <div class="row">
           <div class="col-12 text-center">
-            <h3 class="mt-5">Signup for a program!</h3>
+            <h3 class="mt-5">Sign up for a program!</h3>
             <h5 class="text-secondary font-weight-normal">
-              This information will let us know more about you and assign you to
-              the proper program.
+              We’re excited to have you join us this year. Let us know about you so you can get started.
             </h5>
             <div class="multisteps-form mb-5">
               <div class="row">
                 <div class="col-12 col-lg-12 mx-auto my-5">
                   <div class="multisteps-form__progress">
-                    <button
-                      v-for="(data, id) in steps"
-                      :key="id"
-                      :class="[id == 0 ? 'js-active' : '']"
-                      class="multisteps-form__progress-btn"
-                      type="button"
-                      title="User Info"
-                    >
+                    <button v-for="(data, id) in steps" :key="id" :class="[id == 0 ? 'js-active' : '']"
+                      class="multisteps-form__progress-btn" type="button" title="User Info">
                       <span>{{ data.name }}</span>
                     </button>
                   </div>
@@ -40,13 +33,9 @@
               <div class="row">
                 <div class="col-12 col-lg-12 m-auto">
                   <form class="multisteps-form__form" style="height: 350px">
-                    <div
-                      :class="[index == 0 ? 'js-active' : '']"
-                      class="multisteps-form__panel p-3 border-radius-xl bg-white"
-                      data-animation="FadeIn"
-                      v-for="(slot, index) of Object.keys($slots)"
-                      :key="index"
-                    >
+                    <div :class="[index == 0 ? 'js-active' : '']"
+                      class="multisteps-form__panel p-3 border-radius-xl bg-white" data-animation="FadeIn"
+                      v-for="(slot, index) of Object.keys($slots)" :key="index">
                       <div class="row text-center">
                         <div class="col-12 mx-auto">
                           <h5 class="font-weight-normal">
@@ -73,15 +62,14 @@
                           >
                             Prev
                           </button> -->
-                          <button
-                            v-if="index + 1 !== Object.keys($slots).length"
-                            :class="[allowNext ? '' : 'disabled']"
-                            class="btn bg-gradient-dark ms-auto mb-0 js-btn-next"
-                            type="button"
-                            title="Next"
-                            @click="handleNext"
-                          >
-                            Next
+                          <button v-if="index + 1 !== Object.keys($slots).length"
+                            :class="[allowNext ? 'bg-gradient-success' : 'disabled bg-gradient-dark', `index--${index}`]"
+                            class="btn  ms-auto mb-0 js-btn-next" type="button" title="Next" @click="handleNext">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"
+                              v-if="isLoading"> </span>
+                            <span v-else>Next</span>
+                            <!-- {{ isLoading ? `<span class="spinner-border spinner-border-sm" role="status"
+                              aria-hidden="true"> </span>` : 'Next' }} -->
                           </button>
                         </div>
                       </div>
@@ -117,6 +105,10 @@ export default {
       type: Boolean,
       default: false,
     },
+    isLoading: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
@@ -125,7 +117,7 @@ export default {
   },
   watch: {
     canContinue(value) {
-      console.log(value);
+      console.log('canContinue', value)
       const nextBtn = document.querySelector(
         ".btn.bg-gradient-dark.ms-auto.mb-0.js-btn-next"
       );
@@ -133,6 +125,7 @@ export default {
         nextBtn.classList.contains("disabled")
           ? ""
           : nextBtn.classList.add("disabled");
+        this.allowNext = false
       } else if (value && this.checkAfterEachStep) {
         nextBtn.classList.contains("disabled")
           ? nextBtn.classList.remove("disabled")
@@ -197,5 +190,11 @@ export default {
 <style scoped>
 .modal-dialog {
   max-width: 50% !important;
+}
+
+@media only screen and (min-width <=425px) {
+  .modal-dialog {
+    max-width: 100% !important;
+  }
 }
 </style>

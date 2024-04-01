@@ -25,21 +25,32 @@ class MasterItineraryIndexController extends Controller
      */
     public function store(Request $request, MasterItinerary $masterItinerary)
     {
+        $trip_itineraries;
+        $attributes_array = $this->validateItineraryOverview();
+        
+        $ids = array_column($attributes_array['overview'], 'id');
 
-        $attributes = $this->validateItinerary();
-        $existing_itinerary = $masterItinerary->overview()->where('itinerary_index', '>=', $attributes["itinerary_index"] )->orderBy('itinerary_index')->get();
-        $trip_itinerary = $masterItinerary->overview()->create($attributes);
+        $itineraries_to_delete = MasterItineraryIndex::where('master_itinerary_id', $masterItinerary->id)->get();
 
-        foreach ($existing_itinerary as &$itinerary)
+        $masterItinerary->overview()->whereNotIn('id', $ids)->delete();
+
+        foreach($attributes_array['overview'] as &$attributes)
         {
-            $current_tinerary_index = $itinerary['itinerary_index'];
-            $itinerary->update([
-                'itinerary_index' => $current_tinerary_index + 1
-            ]);
+            if(isset($attributes['id']))
+            {
+                $trip_itinerary = $masterItinerary->overview()->find($attributes['id']);
+                $trip_itinerary->update($attributes);
+            }
+            else
+            {
+                $trip_itinerary = $masterItinerary->overview()->create($attributes);
+            }
         }
 
+        $masterItinerary->refresh();
+
         $data = [
-            'itinerary_overview_item' => $trip_itinerary
+            'itinerary_overview' => $masterItinerary->overview
         ];
 
         return response()->json($data);
@@ -135,11 +146,25 @@ class MasterItineraryIndexController extends Controller
 
         return $attributes = request()->validate([
             'itinerary_index' => 'required',
-            'itinerary_date' => 'required|date',
-            'time' => 'date_format:H:i',
+            'itinerary_date' => 'nullable|date',
+            'time' => 'nullable|date_format:H:i',
             'title' => 'required',
             'content' => 'required',
             'media_file_id' => 'nullable|exists:media_files,id',
+        ]);
+    }
+
+    function validateItineraryOverview(): array
+    {
+        return $attributes = request()->validate([
+            'overview' => 'required|array',
+            'overview.*.id' => 'nullable',
+            'overview.*.itinerary_index' => 'required',
+            'overview.*.itinerary_date' => 'nullable|date',
+            'overview.*.time' => 'nullable|date_format:H:i:s',
+            'overview.*.title' => 'required',
+            'overview.*.content' => 'required',
+            'overview.*.media_file_id' => 'nullable|exists:media_files,id',
         ]);
     }
 

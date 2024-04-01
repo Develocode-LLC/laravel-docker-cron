@@ -19,7 +19,6 @@ class UserPaymentMethodController extends Controller
      */
     public function index(User $user)
     {
-
         $data = [ ];
         
         $auth_user = Auth::user();
@@ -43,6 +42,7 @@ class UserPaymentMethodController extends Controller
         $sourceToken = $request->input('stripe_token');
 
         $stripe = new Stripe();
+        $auth_user = Auth::user();
 
         if(($auth_user->id === $user->id && in_array($auth_user->class, $this->classes)))
         {
@@ -109,5 +109,48 @@ class UserPaymentMethodController extends Controller
         }
 
         return response()->json(['success' => 0, 'message' => 'Unable to delete payment method'], 422);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function verify(Request $request, User $user, UserPaymentMethod $userPaymentMethod)
+    {
+        $stripe = new Stripe();
+        $auth_user = Auth::user();
+
+        if(($auth_user->id === $user->id && in_array($auth_user->class, $this->classes)))
+        {
+            $attributes = $this->validateAmounts();
+            $amounts = array();
+
+            foreach ($attributes['amounts'] as $amount)
+            {
+                array_push($amounts, $amount * 100);
+            }
+
+            $stripe_payment_method_id = $userPaymentMethod->stripe_payment_method_id;
+
+            $payment_method = $stripe->verifyBankAccount($user, $stripe_payment_method_id, $amounts);
+
+            $userPaymentMethod->update(['requires_verification' => 0]);
+
+            $data = [
+                'payment_method' => $payment_method
+            ];
+    
+            return response()->json($data);
+
+        }
+
+        return response()->json(['success' => 0, 'message' => 'Unable to verify payment method'], 422);
+    }
+
+    function validateAmounts(): array
+    {
+        return $attributes = request()->validate([
+            'amounts' => 'required|array',
+            'amounts.*' => 'decimal:0,2'
+        ]);
     }
 }

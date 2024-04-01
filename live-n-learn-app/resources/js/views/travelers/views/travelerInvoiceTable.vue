@@ -12,8 +12,8 @@
 
           <div class="row ml-2">
             <div class="col-4">
-              <a class="btn btn-success" href="/flights/add"><i class="fa fa-plus" aria-hidden="true"></i> Add
-                New Flight </a>
+              <!-- <a class="btn btn-success" href="/flights/add"><i class="fa fa-plus" aria-hidden="true"></i> Add
+                New Flight </a> -->
             </div>
           </div>
 
@@ -71,7 +71,7 @@ export default {
       var user = JSON.parse(localStorage.getItem("user"));
       var childId = localStorage.getItem("childrenId");
       var newApiUrl = "";
-      if (user.class === 'traveler') {
+      if (user.role === 'traveler') {
         newApiUrl =
           this.$store.state.apiUrl +
           "user/" +
@@ -84,7 +84,7 @@ export default {
           childId +
           "/invoice"
       }
-      console.log(newApiUrl);
+      console.log('invoice api url:' + newApiUrl);
       // return;
       await axios
         .get(newApiUrl, {

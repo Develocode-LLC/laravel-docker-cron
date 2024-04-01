@@ -19,7 +19,8 @@
                   <h6 class="d-block mt-2 mb-0">Billed to: {{ invoice.recipient ? invoice.recipient.full_name : '' }}</h6>
                   <p class="text-secondary">
                     {{ invoice.recipient ? invoice.recipient.address_1 : '' }}
-                    <br />{{ invoice.recipient ? invoice.recipient.city : '' }},  {{ invoice.recipient ? invoice.recipient.state_province : '' }} {{ invoice.recipient ? invoice.recipient.postal_code : '' }}
+                    <br />{{ invoice.recipient ? invoice.recipient.city : '' }}, {{ invoice.recipient ?
+                      invoice.recipient.state_province : '' }} {{ invoice.recipient ? invoice.recipient.postal_code : '' }}
                   </p>
                 </div>
               </div>
@@ -62,31 +63,43 @@
                         </tr>
                       </thead>
                       <tbody>
-                        <tr v-for="invoice_item in invoice.invoice_items">
+                        <tr v-for="(invoice_item, index) in invoice.invoice_items" :key="index">
                           <td class="text-start">{{ invoice_item.name }}</td>
                           <td class="ps-4">{{ invoice_item.description }}</td>
                           <td class="ps-4" colspan="2"></td>
-                          <td class="ps-4">$ {{ invoice_item.line_total }}</td>
+                          <td class="ps-4">$ {{ invoice_item.line_total.toFixed(2) }}</td>
                         </tr>
                       </tbody>
                       <tfoot>
                         <tr>
                           <th></th>
                           <th></th>
+                          <th class="h5 ps-4" colspan="2">Subtotal</th>
+                          <th colspan="1" class="text-right h5 ps-4">$ {{ invoice.subtotal.toFixed(2) }}</th>
+                        </tr>
+                        <tr v-for="(invoice_item, index) in invoice.additional_invoice_items" :key="index">
+                          <td></td>
+                          <td></td>
+                          <td class="ps-4" colspan="2">{{ invoice_item.name }}</td>
+                          <td class="ps-4">$ {{ invoice_item.line_total.toFixed(2) }}</td>
+                        </tr>
+                        <tr>
+                          <th></th>
+                          <th></th>
                           <th class="h5 ps-4" colspan="2">Total</th>
-                          <th colspan="1" class="text-right h5 ps-4">$ {{ invoice.subtotal }}</th>
+                          <th colspan="1" class="text-right h5 ps-4">$ {{ invoice.total.toFixed(2) }}</th>
                         </tr>
                         <tr>
                           <th></th>
                           <th></th>
                           <th class="h5 ps-4" colspan="2">Amount Paid</th>
-                          <th colspan="1" class="text-right h5 ps-4">$ {{ invoice.amount_paid }}</th>
+                          <th colspan="1" class="text-right h5 ps-4">$ {{ invoice.amount_paid.toFixed(2) }}</th>
                         </tr>
                         <tr>
                           <th></th>
                           <th></th>
                           <th class="h5 ps-4" colspan="2">Amount Due</th>
-                          <th colspan="1" class="text-right h5 ps-4">$ {{ invoice.amount_due }}</th>
+                          <th colspan="1" class="text-right h5 ps-4">$ {{ invoice.amount_due.toFixed(2) }}</th>
                         </tr>
                       </tfoot>
                     </table>
@@ -97,19 +110,18 @@
           </div>
         </form>
 
-        <list-payments :reloadInvoice="fetchInvoice"/>
+        <list-payments :reloadInvoice="fetchInvoice" />
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
-  import VsudButton from "@/components/VsudButton.vue";
-  import axios from "axios";
-  import store from "@/store/index.js";
-  import { ref } from "vue";
-  import ListPayments from "@/views/invoices/payments/ListPayments.vue";
+import VsudButton from "@/components/VsudButton.vue";
+import axios from "axios";
+import store from "@/store/index.js";
+import { ref } from "vue";
+import ListPayments from "@/views/invoices/payments/ListPayments.vue";
 
 export default {
   name: "Invoice",
@@ -118,33 +130,42 @@ export default {
     ListPayments
   },
   setup() {
-      let invoice = ref({});
+    let invoice = ref({});
+    let isAdmin = ref(false);
 
-      return {
-        invoice
-      }
+    return {
+      invoice,
+      isAdmin
+    }
   },
   methods: {
-      async fetchInvoice() {
+    fetchInvoice() {
 
-          let invoice_id = this.$route.params.id;
-          var newApiUrl = store.state.apiUrl + 'invoice/' + invoice_id;
+      let invoice_id = this.$route.params.id;
+      var newApiUrl = store.state.apiUrl + 'invoice/' + invoice_id;
 
-          await axios.get(newApiUrl, {
-              headers: {
-                  'Content-Type': 'application/json',
-                  'Accept': 'application/json',
-                  'Authorization': 'Bearer ' + localStorage.token
-              }
-          }).then(result => {
-              this.invoice = result.data.invoice;
-          }).catch(error => {
-              console.error(error)
-          })
-      }
+      axios.get(newApiUrl, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': 'Bearer ' + localStorage.token
+        }
+      }).then(result => {
+        this.invoice = result.data.invoice;
+      }).catch(error => {
+        console.error(error)
+      })
+    }
+  },
+  beforeMount() {
+    this.fetchInvoice();
   },
   async mounted() {
-      await this.fetchInvoice();
+    const user = JSON.parse(localStorage.getItem('user'));
+    console.log(user);
+    if (user.role === 'administrator') {
+      isAdmin = true;
+    }
   },
 };
 </script>

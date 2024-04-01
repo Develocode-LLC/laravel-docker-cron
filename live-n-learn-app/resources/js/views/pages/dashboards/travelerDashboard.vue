@@ -133,38 +133,48 @@
               <div class="col-lg-12">
                 <div class="d-flex flex-column h-100">
                   <p class="mb-1 pt-2 text-bold">Trip at a glance</p>
-                  <h5 class="font-weight-bolder">
+                  <h3 class="font-weight-bolder text-success">
                     {{ tripData[0]?.title }}
-                  </h5>
+                  </h3>
                   <div class="row">
                     <div class="col-lg-12">
                       <div class="row">
                         <p class="text-sm font-weight-bolder my-0">Traveler</p>
                       </div>
                       <div class="row">
-                        <p class="mb-2">{{ userData.full_name }}</p>
+                        <p class="mb-2">{{ userData?.full_name }}</p>
                       </div>
                       <!-- <p class="mb-2">Trip Date - 06/07/2024</p> -->
                     </div>
                     <div class="col-lg-6">
                       <div class="row">
-                        <p class="text-sm font-weight-bolder my-0">Trip Date</p>
+                        <p class="text-sm font-weight-bolder my-0">Departure Date</p>
                       </div>
                       <div class="row">
                         <p class="mb-2">{{ tripData[0]?.start_date }}</p>
+                      </div>
+                      <div class="row">
+                        <p class="text-sm font-weight-bolder my-0">Return Date</p>
+                      </div>
+                      <div class="row">
+                        <p class="mb-2">{{ tripData[0]?.end_date }}</p>
                       </div>
                       <!-- <p class="mb-2">Trip Date - 06/07/2024</p> -->
                     </div>
                     <div class="col-lg-6">
                       <div class="row">
                         <p class="text-sm font-weight-bolder my-0">
-                          Coordinator
+                          Group Leader
                         </p>
                       </div>
                       <div class="row">
-                        <p class="mb-2">
-                          {{ tripData[0]?.local_coordinators[0].full_name }}
-                        </p>
+                        <div class="col-10 mb-2">
+                          {{ tripData[0]?.group_leaders[0]?.full_name ?? 'No Group Leader' }}
+
+                          <div class="col-2" v-if="tripData[0]?.group_leaders[0]">
+                            <a class="btn btn-success" href="#"><i class="fa fa-envelope" aria-hidden="true"></i> </a>
+                          </div>
+                        </div>
                       </div>
                       <!-- <p class="mb-2">Trip Date - 06/07/2024</p> -->
                     </div>
@@ -195,12 +205,12 @@
                     <div class="col-lg-12">
                       <div class="row">
                         <p class="text-sm font-weight-bolder my-0">
-                          Description
+                          Days Until Departure
                         </p>
                       </div>
                       <div class="row">
                         <p class="mb-2">
-                          {{ tripData[0]?.description }}
+                          {{ timeUntiTrip }} Days
                         </p>
                       </div>
                       <!-- <p class="mb-2">Trip Date - 06/07/2024</p> -->
@@ -222,14 +232,13 @@
               <div class="row">
                 <div class="col-lg-12">
                   <div class="d-flex flex-column h-100">
-                    <p class="mb-1 pt-2 text-bold">Required Forms!</p>
+                    <p class="mb-1 pt-2 text-bold">Registration Forms</p>
                     <div class="row">
                       <div class="table-responsive">
                         <table id="datatable-search" class="table table-flush">
                           <thead class="thead-light">
                             <tr>
                               <th>Name</th>
-                              <th>Option Type</th>
                               <th>Status</th>
                               <th></th>
                             </tr>
@@ -239,10 +248,7 @@
                               <td class="text-sm font-weight-normal">
                                 Traveler Info
                               </td>
-                              <td class="text-sm font-weight-normal">
-                                Form
-                              </td>
-                              <td class="text-sm font-weight-normal">
+                              <td class="text-sm font-weight-normal text-danger">
                                 Incomplete
                               </td>
                               <td>
@@ -255,11 +261,8 @@
                               <td class="text-sm font-weight-normal">
                                 Health Form
                               </td>
-                              <td class="text-sm font-weight-normal">
-                                Form
-                              </td>
-                              <td class="text-sm font-weight-normal">
-                                Missing
+                              <td class="text-sm font-weight-normal text-danger">
+                                Incomplete
                               </td>
                               <td>
                                 <span class="btn btn-success"
@@ -271,11 +274,8 @@
                               <td class="text-sm font-weight-normal">
                                 Passport
                               </td>
-                              <td class="text-sm font-weight-normal">
-                                Document Upload
-                              </td>
-                              <td class="text-sm font-weight-normal">
-                                Missing
+                              <td class="text-sm font-weight-normal text-danger">
+                                Incomplete
                               </td>
                               <td>
                                 <span class="btn btn-success"
@@ -286,11 +286,8 @@
                               <td class="text-sm font-weight-normal">
                                 Additonal Info
                               </td>
-                              <td class="text-sm font-weight-normal">
-                                Form
-                              </td>
-                              <td class="text-sm font-weight-normal">
-                                Missing
+                              <td class="text-sm font-weight-normal text-danger">
+                                Incomplete
                               </td>
                               <td>
                                 <span class="btn btn-success"
@@ -508,6 +505,14 @@ export default {
     };
   },
   methods: {
+    getDaysUntilDeparture(trip_date) {
+
+      var start = moment(moment().date(), "YYYY-MM-DD");
+      var end = moment(trip_date, "YYYY-MM-DD");
+
+      //Difference in number of days
+      return moment.duration(start.diff(end)).asDays();
+    },
     getUserData() {
       var user = JSON.parse(localStorage.getItem("user"));
 
@@ -523,7 +528,7 @@ export default {
         })
         .then((r) => {
           const result = r.data;
-          console.log(result.user.children[0].trips);
+          console.log(result);
           if (result.user.class === 'traveler') {
             this.tripData = result.user.trips;
             this.userData = result.user;
@@ -538,6 +543,8 @@ export default {
           localStorage.setItem('tripData', this.tripData[0].id);
           //for date dif
           const tripDate = moment(this.tripData[0]?.start_date);
+
+          //const daysToTrip = getDaysUntilDeparture(tripDate);
 
           const now = moment(new Date());
           console.log(tripDate, now);
@@ -563,7 +570,7 @@ export default {
     getInvoiceData() {
       var user = JSON.parse(localStorage.getItem("user"));
       var newApiUrl = "";
-      if (user.class === 'traveler') {
+      if (user.role === 'traveler') {
         newApiUrl =
           this.$store.state.apiUrl +
           "user/" +

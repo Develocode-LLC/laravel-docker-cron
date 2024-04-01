@@ -133,7 +133,8 @@ class InvoiceItemController extends Controller
         return $attributes = request()->validate([
             'name' => 'required',
             'description' => 'nullable',
-            'line_total' => 'required|decimal:0,2'
+            'line_total' => 'required|decimal:0,2',
+            'primary' => 'nullable|boolean'
         ]);
     }
 }
